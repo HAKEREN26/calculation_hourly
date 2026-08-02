@@ -1,0 +1,792 @@
+"use client";
+import { useState, useEffect, useRef } from "react";
+
+const LOGO_B64 = "data:image/png;base64,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";
+const DRAFT_KEY = "hakeren_hourly_draft_v1";
+
+const YN = [{v:'yes',l:'Yes',he:'כן'},{v:'no',l:'No',he:'לא'}];
+
+const INITIAL = {
+  // ── Page 1 — Employee ──
+  name:'', phone:'', email:'', passport:'', nationality:'',
+  empSource:[],              // private / company
+  employerName:'',           // employer / company name
+
+  // ── Page 2 — Employment ──
+  start:'', end:'', termReason:'', resignReason:[], noticeDate:'',
+  noticeDaysGiven:'0',
+
+  // Last (current) hourly wage — most up-to-date values as of filling
+  hoursPerDay:'', daysPerWeek:'', hourlyRate:'', lastUpdateDate:'',
+
+  // Historical wage updates (unlimited) — each a full snapshot + effective date
+  wageUpdates:[],            // {hoursPerDay, daysPerWeek, hourlyRate, effectiveDate}
+
+  // Work type
+  workType:'', workTypeOther:'',
+
+  // Weekends
+  worksWeekends:'', weekendsPerMonth:'1', shabat:'',
+
+  // Vacations
+  empVacations:[{dep:'',ret:''}],
+  employerVacations:[{dep:'',ret:''}],
+
+  // ── Page 3 — Benefits & final ──
+  recuperationReceived:'', recuperationDate:'',
+  annualLeaveReceived:'',   annualLeaveDate:'',
+  holidaysReceived:'',      holidaysDate:'',
+  holidayType:'jewish',     holidayDaysWorked:'',
+  lastSalaryNeeded:'',      lastSalaryDate:'',
+  comments:'',
+};
+
+const WEBHOOK_URL = "https://hook.eu1.make.com/k0g7t1h3bw8n1h3hriukjltspdtfn4t9";
+
+async function submitToMake(f) {
+  const wageUpdates = f.wageUpdates
+    .filter(w => w.hourlyRate && w.effectiveDate)
+    .map(w => ({
+      hours_per_day: Number(w.hoursPerDay) || 0,
+      days_per_week: Number(w.daysPerWeek) || 0,
+      hourly_rate_ils: Number(w.hourlyRate),
+      effective_from: w.effectiveDate
+    }));
+  const empVacations = f.empVacations.filter(v => v.dep && v.ret)
+    .map((v,i) => ({vacation_number:i+1, departure_date:v.dep, return_date:v.ret}));
+  const employerVacations = f.employerVacations.filter(v => v.dep && v.ret)
+    .map((v,i) => ({vacation_number:i+1, departure_date:v.dep, return_date:v.ret}));
+
+  const payload = {
+    // Form identity — lets a shared Make router tell hourly & monthly forms apart
+    formType: "hourly",
+
+    // Flat fields (calculation engine convenience)
+    name: f.name,
+    phone: f.phone,
+    email: f.email,
+    passport: f.passport,
+    nationality: f.nationality,
+    empSource: f.empSource,
+    employerName: f.employerName,
+    start: f.start,
+    end: f.end,
+    termReason: f.termReason,
+    resignReason: Array.isArray(f.resignReason) ? f.resignReason[0] || '' : f.resignReason,
+    noticeDate: f.noticeDate,
+    noticeDaysGiven: Number(f.noticeDaysGiven) || 0,
+    hoursPerDay: Number(f.hoursPerDay) || 0,
+    daysPerWeek: Number(f.daysPerWeek) || 0,
+    hourlyRate: Number(f.hourlyRate) || 0,
+    lastUpdateDate: f.lastUpdateDate || null,
+    wageUpdates,
+    workType: f.workType === 'other' ? (f.workTypeOther || 'other') : f.workType,
+    worksWeekends: f.worksWeekends === 'yes',
+    weekendsPerMonth: f.worksWeekends === 'yes' ? Number(f.weekendsPerMonth) : 0,
+    shabat: f.worksWeekends === 'yes' && f.shabat ? Number(f.shabat) : null,
+    empVacations,
+    employerVacations,
+    recuperationReceived: f.recuperationReceived === 'yes',
+    recuperationLastDate: f.recuperationReceived === 'yes' ? (f.recuperationDate || null) : null,
+    annualLeaveReceived: f.annualLeaveReceived === 'yes',
+    annualLeaveLastDate: f.annualLeaveReceived === 'yes' ? (f.annualLeaveDate || null) : null,
+    holidaysReceived: f.holidaysReceived === 'yes',
+    holidaysLastDate: f.holidaysReceived === 'yes' ? (f.holidaysDate || null) : null,
+    holidayType: f.holidayType,
+    holidayDaysWorked: Number(f.holidayDaysWorked) || 0,
+    lastSalaryNeeded: f.lastSalaryNeeded === 'yes',
+    lastSalaryDate: f.lastSalaryNeeded === 'yes' ? (f.lastSalaryDate || null) : null,
+    comments: f.comments || '',
+
+    // Nested structure for record keeping
+    meta: {
+      submitted_at: new Date().toISOString(),
+      form_version: "1.0",
+      source: "hakeren-hourly-calculation-form"
+    },
+    worker: {
+      full_name: f.name,
+      phone: f.phone,
+      email: f.email,
+      passport_number: f.passport,
+      nationality: f.nationality,
+      employer_type: f.empSource,
+      employer_name: f.employerName
+    },
+    employment: {
+      start_date: f.start,
+      end_date: f.end,
+      termination_reason: f.termReason,
+      resignation_reason: f.resignReason,
+      notice_date: f.noticeDate,
+      notice_days_given: Number(f.noticeDaysGiven) || 0,
+      work_type: f.workType === 'other' ? (f.workTypeOther || 'other') : f.workType,
+      works_weekends: f.worksWeekends,
+      weekends_per_month: f.worksWeekends === 'yes' ? f.weekendsPerMonth : null
+    },
+    wage: {
+      current: {
+        hours_per_day: Number(f.hoursPerDay) || 0,
+        days_per_week: Number(f.daysPerWeek) || 0,
+        hourly_rate_ils: Number(f.hourlyRate) || 0,
+        last_update_date: f.lastUpdateDate || null
+      },
+      shabat_payment_ils: f.worksWeekends === 'yes' && f.shabat ? Number(f.shabat) : null,
+      updates: wageUpdates
+    },
+    vacations: {
+      employee: empVacations,
+      employer: employerVacations
+    },
+    benefits: {
+      recuperation_received: f.recuperationReceived === 'yes',
+      recuperation_last_date: f.recuperationReceived === 'yes' ? (f.recuperationDate || null) : null,
+      annual_leave_received: f.annualLeaveReceived === 'yes',
+      annual_leave_last_date: f.annualLeaveReceived === 'yes' ? (f.annualLeaveDate || null) : null,
+      holidays_received: f.holidaysReceived === 'yes',
+      holidays_last_date: f.holidaysReceived === 'yes' ? (f.holidaysDate || null) : null,
+      holiday_type: f.holidayType,
+      holiday_days_worked: Number(f.holidayDaysWorked) || 0,
+      last_salary_needed: f.lastSalaryNeeded === 'yes',
+      last_salary_date: f.lastSalaryNeeded === 'yes' ? (f.lastSalaryDate || null) : null
+    },
+    additional: {
+      comments: f.comments || null
+    }
+  };
+
+  const res = await fetch(WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) throw new Error(`Webhook error: ${res.status}`);
+  return payload;
+}
+
+// ── Validators ──────────────────────────────────────────────────────────
+const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+// Israeli mobile: local (05XXXXXXXX) or country code (9725XXXXXXXX / +9725XXXXXXXX)
+const isPhone = v => { const d = v.replace(/\D/g,''); return /^05\d{8}$/.test(d) || /^9725\d{8}$/.test(d); };
+const PHONE_MAX_LEN = 20;
+const EMAIL_MAX_LEN = 254;
+const isPosNum = v => v !== '' && !isNaN(v) && Number(v) >= 0;
+// Hebrew, English, digits, whitespace, common name/address punctuation
+const isHeEnText = v => /^[a-zA-Z0-9֐-׿\s.,'"\-\/#&():]*$/.test(v);
+// Passport: English letters and/or digits only
+const isEnDigitsText = v => /^[a-zA-Z0-9]*$/.test(v);
+
+function validatePage(page, f) {
+  const errs = {};
+
+  if (page === 1) {
+    if (!f.name.trim())              errs.name = 'Full name is required';
+    else if (!isHeEnText(f.name))    errs.name = 'Hebrew or English letters only';
+    if (!f.phone.trim())             errs.phone = 'Phone is required';
+    else if (f.phone.trim().length > PHONE_MAX_LEN) errs.phone = `Phone number is too long (max ${PHONE_MAX_LEN} characters)`;
+    else if (!isPhone(f.phone))      errs.phone = 'Enter a valid phone number';
+    if (f.email.trim() && f.email.trim().length > EMAIL_MAX_LEN) errs.email = `Email address is too long (max ${EMAIL_MAX_LEN} characters)`;
+    else if (f.email.trim() && !isEmail(f.email)) errs.email = 'Enter a valid email address';
+    if (!f.passport.trim())          errs.passport = 'Passport number is required';
+    else if (!isEnDigitsText(f.passport)) errs.passport = 'English letters and/or numbers only';
+    if (!f.nationality)              errs.nationality = 'Nationality is required';
+    if (f.empSource.length === 0)    errs.empSource = 'Please select employer type';
+    if (!f.employerName.trim())      errs.employerName = 'Employer name is required';
+    else if (!isHeEnText(f.employerName)) errs.employerName = 'Hebrew or English letters only';
+  }
+
+  if (page === 2) {
+    if (!f.start)                    errs.start = 'Start date is required';
+    else { var sy = new Date(f.start).getFullYear(); if (sy < 1950 || sy > 2100) errs.start = 'Year must be between 1950-2100'; }
+    if (!f.end)                      errs.end = 'End date is required';
+    else { var ey = new Date(f.end).getFullYear(); if (ey < 1950 || ey > 2100) errs.end = 'Year must be between 1950-2100'; }
+    if (f.start && f.end && f.end < f.start) errs.end = 'End date must be after start date';
+    if (!f.termReason)               errs.termReason = 'Select a reason';
+    if (f.termReason === 'resign' && f.resignReason.length === 0)
+                                     errs.resignReason = 'Please select reason for resignation';
+    if (!f.noticeDate)               errs.noticeDate = 'Notice date is required';
+
+    // Current hourly wage
+    if (!f.hoursPerDay)              errs.hoursPerDay = 'Required';
+    else if (!isPosNum(f.hoursPerDay)) errs.hoursPerDay = 'Enter a valid number';
+    if (!f.daysPerWeek)              errs.daysPerWeek = 'Required';
+    else if (!isPosNum(f.daysPerWeek)) errs.daysPerWeek = 'Enter a valid number';
+    if (!f.hourlyRate)              errs.hourlyRate = 'Required';
+    else if (!isPosNum(f.hourlyRate)) errs.hourlyRate = 'Enter a valid amount';
+    if (!f.lastUpdateDate)          errs.lastUpdateDate = 'Last update date is required';
+
+    // Wage updates
+    f.wageUpdates.forEach((w, i) => {
+      const any = w.hoursPerDay || w.daysPerWeek || w.hourlyRate || w.effectiveDate;
+      if (any) {
+        if (!isPosNum(w.hoursPerDay)) errs[`wu_${i}_hpd`] = 'Enter hours';
+        if (!isPosNum(w.daysPerWeek)) errs[`wu_${i}_dpw`] = 'Enter days';
+        if (!isPosNum(w.hourlyRate))  errs[`wu_${i}_rate`] = 'Enter rate';
+        if (!w.effectiveDate)         errs[`wu_${i}_date`] = 'Date required';
+      }
+    });
+
+    // Work type
+    if (!f.workType)                 errs.workType = 'Please select the type of work';
+    if (f.workType === 'other' && !f.workTypeOther.trim()) errs.workTypeOther = 'Please specify the type of work';
+    else if (f.workType === 'other' && !isHeEnText(f.workTypeOther)) errs.workTypeOther = 'Hebrew or English letters only';
+
+    // Weekends
+    if (!f.worksWeekends)            errs.worksWeekends = 'Please answer the weekend question';
+    if (f.worksWeekends === 'yes' && !f.shabat) errs.shabat = 'Shabbat payment is required if you work weekends';
+    else if (f.shabat && !isPosNum(f.shabat))   errs.shabat = 'Enter a valid amount';
+
+    // Vacations
+    f.empVacations.forEach((v, i) => {
+      if (v.dep || v.ret) {
+        if (!v.dep)                  errs[`ev_${i}_dep`] = 'Departure date required';
+        if (!v.ret)                  errs[`ev_${i}_ret`] = 'Return date required';
+        if (v.dep && v.ret && v.ret < v.dep) errs[`ev_${i}_ret`] = 'Return must be after departure';
+      }
+    });
+    f.employerVacations.forEach((v, i) => {
+      if (v.dep || v.ret) {
+        if (!v.dep)                  errs[`rv_${i}_dep`] = 'Departure date required';
+        if (!v.ret)                  errs[`rv_${i}_ret`] = 'Return date required';
+        if (v.dep && v.ret && v.ret < v.dep) errs[`rv_${i}_ret`] = 'Return must be after departure';
+      }
+    });
+  }
+
+  if (page === 3) {
+    if (!f.recuperationReceived)     errs.recuperationReceived = 'Please answer this question';
+    if (f.recuperationReceived === 'yes' && !f.recuperationDate) errs.recuperationDate = 'Please enter the last recuperation date';
+    if (!f.annualLeaveReceived)      errs.annualLeaveReceived = 'Please answer this question';
+    if (f.annualLeaveReceived === 'yes' && !f.annualLeaveDate) errs.annualLeaveDate = 'Please enter the last annual leave date';
+    if (!f.holidaysReceived)         errs.holidaysReceived = 'Please answer this question';
+    if (f.holidaysReceived === 'yes' && !f.holidaysDate) errs.holidaysDate = 'Please enter the last holiday payment date';
+    if (!f.holidayType)              errs.holidayType = 'Please select your holiday type';
+    if (f.holidayDaysWorked === '' || f.holidayDaysWorked === undefined) errs.holidayDaysWorked = 'Please enter number of holiday days (0-9)';
+    if (!f.lastSalaryNeeded)         errs.lastSalaryNeeded = 'Please answer this question';
+    if (f.lastSalaryNeeded === 'yes' && !f.lastSalaryDate) errs.lastSalaryDate = 'Please enter the last salary date';
+    if (f.comments.trim() && !isHeEnText(f.comments)) errs.comments = 'Hebrew or English letters only';
+  }
+
+  return errs;
+}
+
+const css = `
+  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#fff;font-family:'Open Sans',sans-serif;color:#222}
+  .pw{max-width:780px;margin:0 auto;padding:0 16px 40px}
+  .hk-hdr{background:#fff;border-bottom:2px solid #1565c0;padding:14px 24px;position:sticky;top:0;z-index:100;text-align:center}
+  .hk-hdr img{height:84px}
+  .hk-hdr-side{position:absolute;top:50%;right:24px;transform:translateY(-50%);display:flex;align-items:center;gap:12px}
+  @media(max-width:700px){.hk-hdr-side{position:static;transform:none;justify-content:center;margin-top:8px}}
+  .hk-hero{padding:24px 0 18px;border-bottom:1px solid #e0e8f5;margin-bottom:20px}
+  .hk-hero h1{font-size:20px;font-weight:700;color:#1565c0;margin-bottom:12px;text-align:center}
+  .hk-hero p{font-size:13px;color:#444;line-height:1.7;margin-bottom:8px}
+  .hk-hero p.b{font-weight:700;color:#1565c0}
+  .pay-notice{background:#fff8e1;border:1px solid #ffd54f;border-left:4px solid #f9a825;border-radius:6px;padding:12px 16px;margin-bottom:18px;font-size:13px;line-height:1.6;color:#5d4037}
+  .pay-notice strong:first-child{display:block;margin-bottom:4px}
+  .pay-notice strong{color:#e65100}
+  .draft-bar{display:flex;align-items:center;gap:10px;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#2e7d32}
+  .draft-bar button{padding:5px 12px;border:1px solid #2e7d32;border-radius:4px;background:#fff;color:#2e7d32;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600}
+  .fc{border:1px solid #cdd8e8;border-radius:4px;overflow:hidden;margin-bottom:20px}
+  .fc-hdr{background:#1565c0;color:#fff;padding:10px 20px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+  .fc-body{padding:22px 20px}
+  .st{font-size:16px;font-weight:700;color:#1565c0;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid #e0e8f5}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;font-weight:600;color:#1565c0;margin-bottom:4px}
+  .field input,.field select,.field textarea{width:100%;padding:9px 11px;border:1.5px solid #ccc;border-radius:5px;font-size:13px;font-family:inherit;color:#222;background:#fafafa;outline:none;transition:border-color 0.15s}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:#1565c0;background:#fff}
+  .field input.err,.field select.err{border-color:#e53935 !important;background:#fff5f5}
+  .field .errmsg{color:#e53935;font-size:11px;margin-top:3px;display:flex;align-items:center;gap:4px}
+  .field .errmsg::before{content:'!';font-size:10px}
+  .field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231565c0' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+  .hint{font-size:11px;color:#888;margin-top:3px}
+  .he{color:#5a7a9e;font-weight:400;unicode-bidi:isolate}
+  .field label .he{font-size:12px}
+  .rb .he,.chk-item .he{font-size:11px;margin-inline-start:4px}
+  .req-star{color:#e53935}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+  .chk-grp{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+  .chk-item{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+  .chk-item input{width:15px;height:15px;cursor:pointer;accent-color:#1565c0}
+  .rg{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .rb{padding:6px 14px;border:1.5px solid #cdd8e8;border-radius:4px;font-size:12px;cursor:pointer;background:#fff;color:#444;font-family:inherit;font-weight:400;transition:all 0.12s}
+  .rb.on{border-color:#1565c0;background:#e3f2fd;color:#0d47a1;font-weight:600}
+  .rb.err-chip{border-color:#e53935}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid #e0e8f5;gap:8px}
+  .btn-b{background:#1565c0;color:#fff;border:none;padding:10px 22px;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn-b:hover{background:#0d47a1}
+  .btn-o{background:#fff;color:#1565c0;border:2px solid #1565c0;padding:9px 20px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn-g{background:#fff;color:#2e7d32;border:2px solid #2e7d32;padding:9px 20px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .alert-info{background:#e3f2fd;border-left:3px solid #1976d2;border-radius:4px;padding:10px 13px;font-size:12px;color:#0d47a1;line-height:1.6;margin-top:8px}
+  .err-banner{background:#ffebee;border:1px solid #ef9a9a;border-radius:6px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#c62828;line-height:1.6}
+  .err-banner strong{display:block;margin-bottom:4px}
+  .vac-blk{background:#f8fafc;border:1px solid #e0e8f5;border-radius:6px;padding:14px;margin-bottom:10px;position:relative}
+  .vac-blk .rm{position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:18px;color:#e53935;line-height:1}
+  .sal-blk{background:#f0f6ff;border:1px solid #c5d9f0;border-radius:5px;padding:12px;margin-bottom:8px;position:relative}
+  .sal-blk .rm{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:16px;color:#e53935;line-height:1}
+  .add-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border:1.5px dashed #90caf9;border-radius:4px;background:transparent;color:#1565c0;font-size:12px;cursor:pointer;font-weight:600;font-family:inherit;margin-top:4px}
+  .hk-ftr{background:#f0f4f8;border-top:2px solid #1565c0;padding:14px 24px;text-align:center;font-size:10px;color:#666;line-height:1.6;margin-top:16px}
+  .hk-ftr .ftr-en{max-width:720px;margin:0 auto 6px}
+  .hk-ftr .ftr-he{max-width:720px;margin:0 auto;direction:rtl;padding-top:6px;border-top:1px solid #dde5ee}
+  .progress-bar{height:4px;background:#e0e8f5;margin-bottom:0}
+  .progress-fill{height:100%;background:#1565c0;transition:width 0.3s}
+  @media(max-width:600px){.g2,.g3{grid-template-columns:1fr}.hk-hero h1{font-size:16px}}
+`;
+
+function Chips({opts, val, on, hasErr}) {
+  return <div className="rg">{opts.map(o=><button key={o.v} className={`rb${val===o.v?' on':''}${hasErr&&!val?' err-chip':''}`} onClick={()=>on(o.v)}>{o.l}{o.he&&<span className="he notranslate"> / {o.he}</span>}</button>)}</div>;
+}
+function ChkGrp({opts, vals, on}) {
+  return <div className="chk-grp">{opts.map(o=><label key={o.v} className="chk-item"><input type="checkbox" checked={vals.includes(o.v)} onChange={e=>{if(e.target.checked)on([...vals,o.v]);else on(vals.filter(v=>v!==o.v));}}/>{o.l}{o.he&&<span className="he notranslate"> / {o.he}</span>}</label>)}</div>;
+}
+function F({label, he, req, hint, span, err, children, style}) {
+  return <div className="field" style={{...(span?{gridColumn:'1/-1'}:{}),...(style||{})}} id={err?`err-${label?.replace(/\s/g,'_')}`:''}><label>{label}{he&&<span className="he notranslate"> / {he}</span>}{req&&<span className="req-star"> *</span>}</label>{children}{hint&&<p className="hint">{hint}</p>}{err&&<p className="errmsg">{err}</p>}</div>;
+}
+function Err({msg}) { return msg?<p className="errmsg">{msg}</p>:null; }
+
+export default function App() {
+  const [page, setPage] = useState(1);
+  const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(null);
+  const [savedAt, setSavedAt] = useState(null);
+  const [showErrs, setShowErrs] = useState(false);
+  const [touched, setTouched] = useState({});
+  const topRef = useRef(null);
+
+  const [f, setF] = useState(INITIAL);
+  const set = (k, v) => setF(p => ({...p, [k]: v}));
+  const touch = k => setTouched(p => ({...p, [k]: true}));
+
+  // Load saved draft after mount only (avoids hydration mismatch)
+  useEffect(() => {
+    try {
+      const d = localStorage.getItem(DRAFT_KEY);
+      if (d) { const p = JSON.parse(d); if (p.data) setF({...INITIAL, ...p.data}); }
+    } catch(e) {}
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({data:f, savedAt:new Date().toISOString()}));
+      setSavedAt(new Date().toLocaleTimeString());
+    }, 30000);
+    return () => clearInterval(id);
+  }, [f]);
+
+  // Google Translate widget — same minimal integration as hakeren.org.il
+  useEffect(() => {
+    if (window.googleTranslateElementInit) return;
+    document.documentElement.lang = 'en';
+    window.googleTranslateElementInit = function() {
+      new window.google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    };
+    const s = document.createElement('script');
+    s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    s.async = true;
+    document.head.appendChild(s);
+  }, []);
+
+  const saveDraft = () => {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({data:f, savedAt:new Date().toISOString()}));
+    setSavedAt(new Date().toLocaleTimeString());
+  };
+
+  const errs = validatePage(page, f);
+  const hasErrs = Object.keys(errs).length > 0;
+
+  const tryNext = () => {
+    setShowErrs(true);
+    if (hasErrs) {
+      const firstErrEl = document.querySelector('.err,.errmsg,.err-chip');
+      if (firstErrEl) firstErrEl.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    setShowErrs(false);
+    setTouched({});
+    saveDraft();
+    setPage(p => p+1);
+    topRef.current?.scrollIntoView({behavior:'smooth'});
+  };
+
+  const E = k => (showErrs || touched[k]) && errs[k] ? errs[k] : null;
+
+  // Wage updates
+  const addWU = () => set('wageUpdates', [...f.wageUpdates, {hoursPerDay:'',daysPerWeek:'',hourlyRate:'',effectiveDate:''}]);
+  const updWU = (i,k,v) => { const a=[...f.wageUpdates]; a[i]={...a[i],[k]:v}; set('wageUpdates',a); };
+  const rmWU  = i => set('wageUpdates', f.wageUpdates.filter((_,x)=>x!==i));
+  // Employee vacations
+  const addEV = () => set('empVacations', [...f.empVacations, {dep:'',ret:''}]);
+  const updEV = (i,k,v) => { const a=[...f.empVacations]; a[i]={...a[i],[k]:v}; set('empVacations',a); };
+  const rmEV  = i => set('empVacations', f.empVacations.filter((_,x)=>x!==i));
+  // Employer vacations
+  const addRV = () => set('employerVacations', [...f.employerVacations, {dep:'',ret:''}]);
+  const updRV = (i,k,v) => { const a=[...f.employerVacations]; a[i]={...a[i],[k]:v}; set('employerVacations',a); };
+  const rmRV  = i => set('employerVacations', f.employerVacations.filter((_,x)=>x!==i));
+
+  const nats = ['Filipino','Romanian','Moldovan','Ukrainian','Russian','Sri Lankan','Chinese','Indian','Thai','Other'];
+  const termOpts = [{v:'died',l:'Employer Died',he:'המעסיק נפטר'},{v:'fired',l:'Got Fired',he:'פוטר'},{v:'resign',l:'Resigned',he:'התפטר'}];
+  const resignOpts = [{v:'nopay',l:"They didn't pay me",he:'לא שילמו לי'},{v:'sick',l:"I'm sick (medical)",he:'אני חולה (רפואי)'},{v:'harassment',l:'Sexual harassment',he:'הטרדה מינית'},{v:'other',l:'Other reason',he:'סיבה אחרת'}];
+  const workTypeOpts = [{v:'cleaning',l:'Cleaning',he:'ניקיון'},{v:'housekeeping',l:'House Keeping',he:'משק בית'},{v:'other',l:'Other',he:'אחר'}];
+  const holidayTypeOpts = [{v:'jewish',l:'Jewish',he:'יהודי'},{v:'christian_catholic',l:'Christian Catholic',he:'נוצרי קתולי'},{v:'christian_orthodox',l:'Christian Orthodox',he:'נוצרי אורתודוקסי'},{v:'thailand',l:'Thailand',he:'תאילנד'},{v:'india',l:'India',he:'הודו'},{v:'srilanka',l:'Sri Lanka',he:'סרי לנקה'},{v:'romania',l:'Romania',he:'רומניה'},{v:'ukraine',l:'Ukraine',he:'אוקראינה'}];
+  const inp = (k, extra) => {
+    const bad = (showErrs || touched[k]) && errs[k];
+    return {
+      style: {width:'100%',padding:'9px 11px',border:`1.5px solid ${bad?'#e53935':'#ccc'}`,borderRadius:5,fontSize:13,fontFamily:'inherit',color:'#222',background:bad?'#fff5f5':'#fafafa',outline:'none'},
+      ...extra
+    };
+  };
+
+  const pageTitle = ['Employee Information','Employment & Wage','Benefits & Final Details'][page-1];
+  const pageTitleHe = ['פרטי העובד/ת','פרטי העסקה ושכר','זכויות ופרטים נוספים'][page-1];
+  const pct = (page/3)*100;
+
+  if (submitted) return (
+    <>
+      <style dangerouslySetInnerHTML={{__html: css}} />
+      <div className="hk-hdr"><img src={LOGO_B64} alt="Hakeren"/></div>
+      <div className="pw" style={{textAlign:'center',paddingTop:60}}>
+        <div style={{fontSize:56,marginBottom:20,color:'#4caf50'}}>✓</div>
+        <h2 style={{fontSize:22,color:'#1565c0',marginBottom:12}}>Form Submitted Successfully <span className="he notranslate">/ הטופס נשלח בהצלחה</span></h2>
+        <p style={{fontSize:14,color:'#444',lineHeight:1.7}}>Your calculation is being processed.<br/>Our team will contact you shortly.<br/><span className="he notranslate" style={{display:'block',direction:'rtl',textAlign:'center'}}>החישוב שלך מעובד כעת. הצוות שלנו יצור איתך קשר בקרוב.</span></p>
+      </div>
+      <div className="hk-ftr">
+        <p className="ftr-en">All calculation forms for foreign workers' rights in Israel are proprietary materials of Hakeren — the Israeli Foundation for Foreign Worker Rights — and are protected by copyright. Any unauthorized reproduction, copying, or duplication of content from this website or the forms provided is strictly prohibited. All rights reserved. &copy;</p>
+        <p className="ftr-he he notranslate">כל טפסי החישוב לזכויות עובדים זרים בישראל הם רכוש קנייני של הקרן הישראלית לזכויות העובד הזר ומוגנים בזכויות יוצרים. חל איסור מוחלט על העתקה, שכפול או שימוש בתוכן מהאתר או מהטפסים ללא אישור. כל הזכויות שמורות. &copy;</p>
+      </div>
+    </>
+  );
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{__html: css}} />
+      <div className="hk-hdr" ref={topRef}>
+        <img src={LOGO_B64} alt="Hakeren"/>
+        <div className="hk-hdr-side">
+          <div id="google_translate_element" className="notranslate"/>
+          <span style={{fontSize:11,color:'#1565c0',fontWeight:600}}>Hourly Worker Rights Calculation <span className="he notranslate">/ חישוב זכויות עובד שעתי</span></span>
+        </div>
+      </div>
+      <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}}/></div>
+
+      <div className="pw">
+        <div className="hk-hero">
+          <h1>טופס חישוב שעתי | Hourly Calculation Form | Форма почасового расчёта</h1>
+          <p>Welcome to the Hakeren Social Benefits Calculation Page for hourly-paid workers. HAKEREN is the prominent Israeli company servicing Foreign Workers in Israel, specializing in precise Social Benefits calculations. Alongside HAKEREN, our team of skilled professionals is dedicated to delivering accurate wage calculations in strict compliance by the law for employees and employers. To obtain a precise salary calculation, kindly complete the form below.
+            <span className="he notranslate" style={{display:'block',marginTop:6,direction:'rtl',textAlign:'right'}}>ברוכים הבאים לעמוד חישוב הזכויות הסוציאליות של הקרן הישראלית לעובדים בשכר שעתי. הקרן היא החברה הישראלית המובילה בשירות עובדים זרים בישראל, המתמחה בחישובים מדויקים של זכויות סוציאליות. לצד הקרן, צוות אנשי המקצוע המנוסים שלנו מחויב לספק חישובי שכר מדויקים, בהתאם מלא לחוק, לעובדים ולמעסיקים. לקבלת חישוב שכר מדויק, אנא מלאו את הטופס הבא.</span>
+          </p>
+          <p className="b">Hakeren the sole company that meticulously verifies your entitlements to ensure accurate salary assessments. Our commitment extends to confirming whether you have received the precise salary that aligns with your deserving job.
+            <span className="he notranslate" style={{display:'block',marginTop:6,direction:'rtl',textAlign:'right'}}>הקרן היא החברה היחידה שבודקת בקפידה את זכאותכם כדי להבטיח הערכת שכר מדויקת. המחויבות שלנו כוללת גם אימות שקיבלתם את השכר המדויק המתאים לתפקידכם.</span>
+          </p>
+        </div>
+
+        <div className="pay-notice">
+          <strong>Important - Payment Notice <span className="he notranslate">/ הודעה חשובה - תשלום</span></strong>
+          <span>Results will be provided <span style={{color:'#e65100',fontWeight:700}}>only to those who have paid by credit card (Upay)</span>. If you wish to pay by <span style={{color:'#e65100',fontWeight:700,textDecoration:'underline'}}>cash or bank transfer</span>, please pay by bank transfer and upload the payment confirmation at the following link: <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>payment.hakeren.org.il</a></span>
+          <span className="he notranslate" style={{display:'block',marginTop:8,direction:'rtl',textAlign:'right'}}>התוצאות יימסרו רק למי ששילם/ה בכרטיס אשראי (Upay). אם ברצונך לשלם בהעברה בנקאית, יש לשלם בהעברה בנקאית ולהעלות את אישור התשלום בקישור: <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>payment.hakeren.org.il</a></span>
+          <span style={{display:'block',marginTop:8,fontWeight:600}}>Phone: 050-5750054 | Phone: 072-2243333</span>
+        </div>
+
+        {savedAt&&<div className="draft-bar">
+          <span>Draft auto-saved at {savedAt}</span>
+          <button onClick={()=>{if(confirm('Clear draft?')){localStorage.removeItem(DRAFT_KEY);setF(INITIAL);setSavedAt(null);}}}>Clear</button>
+        </div>}
+
+        {showErrs && hasErrs && <div className="err-banner">
+          <strong>Please complete all required fields before continuing</strong>
+          {Object.values(errs).slice(0,3).map((e,i)=><div key={i}>-{e}</div>)}
+          {Object.keys(errs).length>3&&<div>-...and {Object.keys(errs).length-3} more</div>}
+        </div>}
+
+        <div className="fc">
+          <div className="fc-hdr">
+            <span>Page {page} of 3 - {pageTitle} <span className="he notranslate" style={{color:'#cfe4fb'}}>/ עמוד {page} מתוך 3 - {pageTitleHe}</span></span>
+            <button onClick={saveDraft} style={{padding:'4px 12px',fontSize:11,border:'1px solid rgba(255,255,255,0.5)',borderRadius:3,background:'rgba(255,255,255,0.15)',color:'#fff',cursor:'pointer',fontFamily:'inherit'}}>Save draft <span className="he notranslate">/ שמירת טיוטה</span></button>
+          </div>
+          <div className="fc-body">
+
+            {/* ═══ PAGE 1 — EMPLOYEE INFORMATION ═══ */}
+            {page===1&&<>
+              <p className="st">Employee Information: <span className="he notranslate">/ פרטי העובד/ת</span></p>
+              <F label="Full Name" he="שם מלא" req hint="Hebrew or English letters only / עברית או אנגלית בלבד" err={E('name')}>
+                <input {...inp('name')} value={f.name} onChange={e=>set('name',e.target.value)} onBlur={()=>touch('name')} placeholder="Full name"/>
+              </F>
+              <F label="Mobile Phone" he="טלפון נייד" req err={E('phone')}>
+                <input {...inp('phone')} type="tel" maxLength={PHONE_MAX_LEN} value={f.phone} onChange={e=>set('phone',e.target.value)} onBlur={()=>touch('phone')} placeholder="+972 / 05X-XXXXXXX"/>
+              </F>
+              <F label="Email" he="אימייל" err={E('email')}>
+                <input {...inp('email')} type="email" maxLength={EMAIL_MAX_LEN} value={f.email} onChange={e=>set('email',e.target.value)} onBlur={()=>touch('email')} placeholder="worker@example.com"/>
+              </F>
+              <F label="Passport Number" he="מספר דרכון" req hint="English letters and/or numbers only / אותיות אנגליות ו/או מספרים בלבד" err={E('passport')}>
+                <input {...inp('passport')} value={f.passport} onChange={e=>set('passport',e.target.value)} placeholder="Passport number"/>
+              </F>
+              <F label="Choose Your Nationality" he="בחירת אזרחות" req err={E('nationality')}>
+                <select {...inp('nationality')} value={f.nationality} onChange={e=>set('nationality',e.target.value)}>
+                  <option value="">Choose Your Nationality</option>
+                  {nats.map(n=><option key={n} value={n}>{n}</option>)}
+                </select>
+              </F>
+              <div className="field">
+                <label>Are you receiving salary through a company or a private employer? <span className="he notranslate">/ האם את/ה מקבל/ת שכר דרך חברה או מעסיק פרטי?</span> <span className="req-star">*</span></label>
+                <ChkGrp opts={[{v:'private',l:'Private Employer',he:'מעסיק פרטי'},{v:'company',l:'Company',he:'חברה'}]} vals={f.empSource} on={v=>set('empSource',v)}/>
+                <Err msg={E('empSource')}/>
+              </div>
+              <F label="Employer / Company Name" he="שם המעסיק" req hint="Hebrew or English letters only / עברית או אנגלית בלבד" err={E('employerName')}>
+                <input {...inp('employerName')} value={f.employerName} onChange={e=>set('employerName',e.target.value)} onBlur={()=>touch('employerName')} placeholder="Employer or company name"/>
+              </F>
+            </>}
+
+            {/* ═══ PAGE 2 — EMPLOYMENT & WAGE ═══ */}
+            {page===2&&<>
+              <p className="st">Employment Information: <span className="he notranslate">/ פרטי העסקה</span></p>
+              <div className="g2">
+                <F label="Employment Start Date" he="תאריך תחילת העסקה" req err={E('start')}>
+                  <input {...inp('start')} type="date" min="1950-01-01" max="2100-12-31" value={f.start} onChange={e=>set('start',e.target.value)}/>
+                </F>
+                <F label="Employment End Date" he="תאריך סיום העסקה" req err={E('end')}>
+                  <input {...inp('end')} type="date" min="1950-01-01" max="2100-12-31" value={f.end} onChange={e=>set('end',e.target.value)}/>
+                </F>
+              </div>
+              <div className="field">
+                <label style={{fontWeight:700,color:'#1565c0'}}>Reason of Termination <span className="he notranslate">/ סיבת סיום ההעסקה</span> <span className="req-star">*</span></label>
+                <Chips opts={termOpts} val={f.termReason} on={v=>set('termReason',v)} hasErr={showErrs&&!f.termReason}/>
+                <Err msg={E('termReason')}/>
+              </div>
+              {f.termReason==='resign'&&<div className="field">
+                <label style={{fontWeight:700,color:'#1565c0'}}>Why did you resign? <span className="he notranslate">/ מדוע התפטרת?</span> <span className="req-star">*</span></label>
+                <ChkGrp opts={resignOpts} vals={f.resignReason} on={v=>set('resignReason',v)}/>
+                <Err msg={E('resignReason')}/>
+              </div>}
+              <F label="When did you provide or receive advance notice?" he="מתי ניתנה או התקבלה הודעה מוקדמת?" req err={E('noticeDate')}>
+                <input {...inp('noticeDate')} type="date" value={f.noticeDate} onChange={e=>{
+                  const nd = e.target.value;
+                  set('noticeDate', nd);
+                  if (nd && f.end) {
+                    const days = Math.round((new Date(f.end) - new Date(nd)) / 86400000);
+                    if (days >= 0) set('noticeDaysGiven', String(days));
+                  }
+                }}/>
+              </F>
+              <F label="How many advance notice days were given?" he="כמה ימי הודעה מוקדמת ניתנו?" hint={f.noticeDate && f.end ? 'Auto-calculated — you can edit manually / חושב אוטומטית — ניתן לשנות ידנית' : 'Enter 0 if no advance notice was given'}>
+                <input {...inp('noticeDaysGiven')} type="number" min="0" value={f.noticeDaysGiven} onChange={e=>set('noticeDaysGiven',e.target.value)} placeholder="0"/>
+              </F>
+
+              {/* Current hourly wage */}
+              <p style={{fontSize:14,fontWeight:700,color:'#1565c0',margin:'16px 0 4px'}}>Last Hourly Wage <span className="he notranslate">/ שכר שעתי אחרון</span></p>
+              <p style={{fontSize:12,color:'#555',marginBottom:10,lineHeight:1.5,background:'#f5f5f5',padding:'8px 12px',borderRadius:8,border:'1px solid #e0e0e0'}}>
+                Enter your <strong>most up-to-date figures</strong> as of the day you fill in this form.
+                <br/><span className="he notranslate" style={{display:'block',direction:'rtl',textAlign:'right'}}>יש למלא את הנתונים הכי מעודכנים ליום מילוי הטופס.</span>
+              </p>
+              <div className="g3">
+                <F label="Hours per work day" he="שעות ליום עבודה" req err={E('hoursPerDay')}>
+                  <input {...inp('hoursPerDay')} type="number" min="0" step="0.5" value={f.hoursPerDay} onChange={e=>set('hoursPerDay',e.target.value)} placeholder="e.g. 8"/>
+                </F>
+                <F label="Days per week" he="ימים בשבוע" req err={E('daysPerWeek')}>
+                  <input {...inp('daysPerWeek')} type="number" min="0" max="7" step="1" value={f.daysPerWeek} onChange={e=>set('daysPerWeek',e.target.value)} placeholder="e.g. 5"/>
+                </F>
+                <F label="Wage per hour (NIS)" he="שכר לשעה (בשקלים)" req err={E('hourlyRate')}>
+                  <input {...inp('hourlyRate')} type="number" min="0" step="0.01" value={f.hourlyRate} onChange={e=>set('hourlyRate',e.target.value)} placeholder="NIS/hour"/>
+                </F>
+              </div>
+              <F label="Last update date" he="תאריך עדכון אחרון" req hint="The date these figures became valid" err={E('lastUpdateDate')}>
+                <input {...inp('lastUpdateDate')} type="date" value={f.lastUpdateDate} onChange={e=>set('lastUpdateDate',e.target.value)}/>
+              </F>
+
+              {/* Wage updates */}
+              <p style={{fontSize:14,fontWeight:700,color:'#1565c0',margin:'16px 0 8px'}}>Wage Updates <span className="he notranslate">/ עדכוני שכר</span></p>
+              <p style={{fontSize:12,color:'#555',marginBottom:10,lineHeight:1.5,background:'#f5f5f5',padding:'8px 12px',borderRadius:8,border:'1px solid #e0e0e0'}}>
+                List <strong>every earlier change</strong> that affected your wage during the employment. For each update, enter the hours per day, days per week, hourly wage, and the date it became valid.
+                <br/><span className="he notranslate" style={{display:'block',direction:'rtl',textAlign:'right'}}>נא לפרט כל שינוי קודם שהשפיע על השכר במהלך ההעסקה. לכל עדכון יש להזין מס' שעות ליום, מס' ימים בשבוע, שכר לשעה, ותאריך תחילת התוקף.</span>
+              </p>
+              {f.wageUpdates.map((w,i)=><div key={i} className="sal-blk">
+                <button className="rm" onClick={()=>rmWU(i)}>✕</button>
+                <p style={{fontSize:13,fontWeight:700,color:'#1565c0',marginBottom:10}}>Update {i+1} <span className="he notranslate">/ עדכון {i+1}</span></p>
+                <div className="g3">
+                  <F label="Hours/day" he="שעות ליום" err={E(`wu_${i}_hpd`)}>
+                    <input {...inp(`wu_${i}_hpd`)} type="number" min="0" step="0.5" value={w.hoursPerDay} onChange={e=>updWU(i,'hoursPerDay',e.target.value)} placeholder="8"/>
+                  </F>
+                  <F label="Days/week" he="ימים בשבוע" err={E(`wu_${i}_dpw`)}>
+                    <input {...inp(`wu_${i}_dpw`)} type="number" min="0" max="7" step="1" value={w.daysPerWeek} onChange={e=>updWU(i,'daysPerWeek',e.target.value)} placeholder="5"/>
+                  </F>
+                  <F label="Wage/hour (NIS)" he="שכר לשעה" err={E(`wu_${i}_rate`)}>
+                    <input {...inp(`wu_${i}_rate`)} type="number" min="0" step="0.01" value={w.hourlyRate} onChange={e=>updWU(i,'hourlyRate',e.target.value)} placeholder="NIS"/>
+                  </F>
+                </div>
+                <F label="Effective from date" he="תאריך תחילת התוקף" err={E(`wu_${i}_date`)}>
+                  <input {...inp(`wu_${i}_date`)} type="date" value={w.effectiveDate} onChange={e=>updWU(i,'effectiveDate',e.target.value)}/>
+                </F>
+              </div>)}
+              <button className="add-btn" onClick={addWU}>+ Add wage update <span className="he notranslate">/ הוספת עדכון שכר</span></button>
+
+              {/* Work type */}
+              <F label="Type of work" he="סוג העבודה" req err={E('workType')} style={{marginTop:16}}>
+                <select {...inp('workType')} value={f.workType} onChange={e=>set('workType',e.target.value)}>
+                  <option value="">Select type of work</option>
+                  {workTypeOpts.map(o=><option key={o.v} value={o.v}>{o.l} / {o.he}</option>)}
+                </select>
+              </F>
+              {f.workType==='other'&&<F label="Please specify the type of work" he="פירוט סוג העבודה" req hint="Hebrew or English letters only / עברית או אנגלית בלבד" err={E('workTypeOther')}>
+                <input {...inp('workTypeOther')} value={f.workTypeOther} onChange={e=>set('workTypeOther',e.target.value)} placeholder="Type of work"/>
+              </F>}
+
+              {/* Weekends */}
+              <div className="field" style={{marginTop:8}}>
+                <label style={{fontWeight:700,color:'#1565c0'}}>Do you work on weekends? <span className="he notranslate">/ האם את/ה עובד/ת בסופי שבוע?</span> <span className="req-star">*</span></label>
+                <Chips val={f.worksWeekends} on={v=>set('worksWeekends',v)} opts={YN} hasErr={showErrs&&errs.worksWeekends}/>
+                <Err msg={E('worksWeekends')}/>
+              </div>
+              {f.worksWeekends==='yes'&&<>
+                <F label="How many weekends in a month?" he="כמה סופי שבוע בחודש?">
+                  <select {...inp('weekendsPerMonth')} style={{maxWidth:200}} value={f.weekendsPerMonth} onChange={e=>set('weekendsPerMonth',e.target.value)}>
+                    {['1','2','3','4'].map(n=><option key={n} value={n}>{n}</option>)}
+                  </select>
+                </F>
+                <F label="How much do you receive per Shabbat day? (NIS)" he="כמה את/ה מקבל/ת עבור יום שבת? (בשקלים)" req hint="The amount your employer pays you for each Shabbat day worked" err={E('shabat')}>
+                  <input {...inp('shabat')} type="number" min="0" value={f.shabat} onChange={e=>set('shabat',e.target.value)} placeholder="Amount per single Shabbat"/>
+                </F>
+              </>}
+
+              {/* Employee vacations */}
+              <p style={{fontSize:14,fontWeight:700,color:'#1565c0',margin:'16px 0 4px'}}>Employee Vacations <span className="he notranslate">/ חופשות של העובד</span></p>
+              <p style={{fontSize:12,color:'#666',marginBottom:10}}>If you took vacation, enter the departure and return dates for each trip. <span className="he notranslate">אם יצאת לחופשה, יש להזין את תאריך היציאה ותאריך החזרה עבור כל חופשה.</span></p>
+              {f.empVacations.map((v,i)=><div key={i} className="vac-blk">
+                {f.empVacations.length>1&&<button className="rm" onClick={()=>rmEV(i)}>✕</button>}
+                <p style={{fontSize:13,fontWeight:700,color:'#1565c0',marginBottom:10}}>Vacation {i+1} <span className="he notranslate">/ חופשה {i+1}</span></p>
+                <div className="g2">
+                  <F label="Departure date" he="תאריך יציאה" err={E(`ev_${i}_dep`)}>
+                    <input {...inp(`ev_${i}_dep`)} type="date" value={v.dep} onChange={e=>updEV(i,'dep',e.target.value)}/>
+                  </F>
+                  <F label="Return date" he="תאריך חזרה" err={E(`ev_${i}_ret`)}>
+                    <input {...inp(`ev_${i}_ret`)} type="date" value={v.ret} onChange={e=>updEV(i,'ret',e.target.value)}/>
+                  </F>
+                </div>
+              </div>)}
+              <button className="add-btn" onClick={addEV}>+ Add employee vacation <span className="he notranslate">/ הוספת חופשת עובד</span></button>
+
+              {/* Employer vacations */}
+              <p style={{fontSize:14,fontWeight:700,color:'#1565c0',margin:'16px 0 4px'}}>Employer Vacations <span className="he notranslate">/ חופשות של המעסיק</span></p>
+              <p style={{fontSize:12,color:'#666',marginBottom:10}}>Periods the employer was away (so you did not work). Enter departure and return dates. <span className="he notranslate">תקופות שבהן המעסיק היה בחופשה (ולא עבדת). יש להזין תאריך יציאה ותאריך חזרה.</span></p>
+              {f.employerVacations.map((v,i)=><div key={i} className="vac-blk">
+                {f.employerVacations.length>1&&<button className="rm" onClick={()=>rmRV(i)}>✕</button>}
+                <p style={{fontSize:13,fontWeight:700,color:'#1565c0',marginBottom:10}}>Employer vacation {i+1} <span className="he notranslate">/ חופשת מעסיק {i+1}</span></p>
+                <div className="g2">
+                  <F label="Departure date" he="תאריך יציאה" err={E(`rv_${i}_dep`)}>
+                    <input {...inp(`rv_${i}_dep`)} type="date" value={v.dep} onChange={e=>updRV(i,'dep',e.target.value)}/>
+                  </F>
+                  <F label="Return date" he="תאריך חזרה" err={E(`rv_${i}_ret`)}>
+                    <input {...inp(`rv_${i}_ret`)} type="date" value={v.ret} onChange={e=>updRV(i,'ret',e.target.value)}/>
+                  </F>
+                </div>
+              </div>)}
+              <button className="add-btn" onClick={addRV}>+ Add employer vacation <span className="he notranslate">/ הוספת חופשת מעסיק</span></button>
+            </>}
+
+            {/* ═══ PAGE 3 — BENEFITS & FINAL DETAILS ═══ */}
+            {page===3&&<>
+              <p className="st">Benefits & Final Details: <span className="he notranslate">/ זכויות ופרטים נוספים</span></p>
+
+              {/* Recuperation */}
+              <div className="field">
+                <label style={{fontWeight:700,color:'#1565c0'}}>Did you receive Recuperation (Avra'a) payment? <span className="he notranslate">/ האם התקבל תשלום הבראה?</span> <span className="req-star">*</span></label>
+                <Chips val={f.recuperationReceived} on={v=>set('recuperationReceived',v)} opts={YN} hasErr={showErrs&&errs.recuperationReceived}/>
+                <Err msg={E('recuperationReceived')}/>
+              </div>
+              {f.recuperationReceived==='yes'&&<F label="When was it last received?" he="מתי התקבל לאחרונה תשלום הבראה?" req err={E('recuperationDate')}>
+                <input {...inp('recuperationDate')} type="date" value={f.recuperationDate} onChange={e=>set('recuperationDate',e.target.value)}/>
+              </F>}
+
+              {/* Annual leave */}
+              <div className="field" style={{marginTop:12}}>
+                <label style={{fontWeight:700,color:'#1565c0'}}>Did you receive annual leave (vacation) payment? <span className="he notranslate">/ האם התקבל תשלום חופשה שנתית?</span> <span className="req-star">*</span></label>
+                <Chips val={f.annualLeaveReceived} on={v=>set('annualLeaveReceived',v)} opts={YN} hasErr={showErrs&&errs.annualLeaveReceived}/>
+                <Err msg={E('annualLeaveReceived')}/>
+              </div>
+              {f.annualLeaveReceived==='yes'&&<F label="When was it last received?" he="מתי התקבל לאחרונה תשלום חופשה שנתית?" req err={E('annualLeaveDate')}>
+                <input {...inp('annualLeaveDate')} type="date" value={f.annualLeaveDate} onChange={e=>set('annualLeaveDate',e.target.value)}/>
+              </F>}
+
+              {/* Holidays */}
+              <div className="field" style={{marginTop:12}}>
+                <label style={{fontWeight:700,color:'#1565c0'}}>Did you receive holiday payment? <span className="he notranslate">/ האם התקבל תשלום חגים?</span> <span className="req-star">*</span></label>
+                <Chips val={f.holidaysReceived} on={v=>set('holidaysReceived',v)} opts={YN} hasErr={showErrs&&errs.holidaysReceived}/>
+                <Err msg={E('holidaysReceived')}/>
+              </div>
+              {f.holidaysReceived==='yes'&&<F label="When was it last received?" he="מתי התקבל לאחרונה תשלום עבור חגים?" req err={E('holidaysDate')}>
+                <input {...inp('holidaysDate')} type="date" value={f.holidaysDate} onChange={e=>set('holidaysDate',e.target.value)}/>
+              </F>}
+
+              <F label="Which holidays do you celebrate?" he="אילו חגים את/ה חוגג/ת?" req err={E('holidayType')} style={{marginTop:12}}>
+                <select {...inp('holidayType')} value={f.holidayType} onChange={e=>set('holidayType',e.target.value)}>
+                  <option value="">Select your holidays</option>
+                  {holidayTypeOpts.map(o=><option key={o.v} value={o.v}>{o.l} / {o.he}</option>)}
+                </select>
+              </F>
+              <F label="How many holiday days were you paid from the beginning of the civil year until today?" he="כמה ימי חג שולמו מתחילת השנה האזרחית ועד היום?" req err={E('holidayDaysWorked')} hint="Maximum 9 days per year">
+                <input {...inp('holidayDaysWorked')} type="number" min="0" max="9" value={f.holidayDaysWorked} onChange={e=>set('holidayDaysWorked',e.target.value)} placeholder="0-9"/>
+              </F>
+
+              <div className="field" style={{marginTop:12}}>
+                <label style={{fontWeight:700,color:'#1565c0'}}>Do you need to calculate the last month's salary? <span className="he notranslate">/ האם יש צורך לחשב את שכר החודש האחרון?</span> <span className="req-star">*</span></label>
+                <Chips val={f.lastSalaryNeeded} on={v=>set('lastSalaryNeeded',v)} opts={YN} hasErr={showErrs&&errs.lastSalaryNeeded}/>
+                <Err msg={E('lastSalaryNeeded')}/>
+                <p className="hint">Select "Yes" if the employer did not pay the last month's salary <span className="he notranslate">יש לבחור "כן" אם המעסיק לא שילם את שכר החודש האחרון</span></p>
+              </div>
+              {f.lastSalaryNeeded==='yes'&&<F label="Last date salary was paid" he="התאריך האחרון שבו שולם שכר" hint="The last date you received salary payment" err={E('lastSalaryDate')}>
+                <input {...inp('lastSalaryDate')} type="date" value={f.lastSalaryDate} onChange={e=>set('lastSalaryDate',e.target.value)}/>
+              </F>}
+
+              <F label="Additional comments or information:" he="הערות או מידע נוסף:" hint="Hebrew or English letters only / עברית או אנגלית בלבד" err={E('comments')}>
+                <textarea {...inp('comments')} style={{...inp('comments').style,minHeight:80,resize:'vertical'}} value={f.comments} onChange={e=>set('comments',e.target.value)}/>
+              </F>
+            </>}
+
+            {/* Navigation */}
+            {sendError&&<div className="err-banner" style={{marginTop:12}}>
+              <strong>Submission failed - please try again <span className="he notranslate">/ השליחה נכשלה - נא לנסות שוב</span></strong>
+              {sendError}
+            </div>}
+            <div className="nav">
+              <div style={{display:'flex',gap:8}}>
+                {page>1&&<button className="btn-o" onClick={()=>{setShowErrs(false);setSendError(null);setPage(p=>p-1);topRef.current?.scrollIntoView({behavior:'smooth'});}}>Previous <span className="he notranslate">/ הקודם</span></button>}
+                <button className="btn-g" onClick={saveDraft}>Save draft <span className="he notranslate">/ שמירת טיוטה</span></button>
+              </div>
+              {page<3
+                ?<button className="btn-b" onClick={tryNext}>Next <span className="he notranslate" style={{color:'#cfe4fb'}}>/ הבא</span></button>
+                :<button
+                    className="btn-b"
+                    disabled={sending}
+                    style={{opacity:sending?0.7:1,minWidth:160}}
+                    onClick={async()=>{
+                      setShowErrs(true);
+                      if(hasErrs) return;
+                      setSending(true);
+                      setSendError(null);
+                      try {
+                        await submitToMake(f);
+                        localStorage.removeItem(DRAFT_KEY);
+                        setSubmitted(true);
+                      } catch(e) {
+                        setSendError(e.message || 'Network error. Check your connection.');
+                        topRef.current?.scrollIntoView({behavior:'smooth'});
+                      } finally {
+                        setSending(false);
+                      }
+                    }}>
+                    {sending ? 'Sending...' : <>Send Form <span className="he notranslate" style={{color:'#cfe4fb'}}>/ שליחת הטופס</span></>}
+                  </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div className="hk-ftr">
+          <p className="ftr-en">All calculation forms for foreign workers' rights in Israel are proprietary materials of Hakeren — the Israeli Foundation for Foreign Worker Rights — and are protected by copyright. Any unauthorized reproduction, copying, or duplication of content from this website or the forms provided is strictly prohibited. All rights reserved. &copy;</p>
+          <p className="ftr-he he notranslate">כל טפסי החישוב לזכויות עובדים זרים בישראל הם רכוש קנייני של הקרן הישראלית לזכויות העובד הזר ומוגנים בזכויות יוצרים. חל איסור מוחלט על העתקה, שכפול או שימוש בתוכן מהאתר או מהטפסים ללא אישור. כל הזכויות שמורות. &copy;</p>
+        </div>
+      </div>
+    </>
+  );
+}
