@@ -185,6 +185,7 @@ function validatePage(page, f) {
     if (!f.passport.trim())          errs.passport = 'Passport number is required';
     else if (!isEnDigitsText(f.passport)) errs.passport = 'English letters and/or numbers only';
     if (!f.nationality)              errs.nationality = 'Nationality is required';
+    if (f.employerName.trim() && !isHeEnText(f.employerName)) errs.employerName = 'Hebrew or English letters only';
   }
 
   if (page === 2) {
@@ -257,7 +258,6 @@ function validatePage(page, f) {
     if (!f.lastSalaryNeeded)         errs.lastSalaryNeeded = 'Please answer this question';
     if (f.lastSalaryNeeded === 'yes' && !f.lastSalaryDate) errs.lastSalaryDate = 'Please enter the last salary date';
     if (f.comments.trim() && !isHeEnText(f.comments)) errs.comments = 'Hebrew or English letters only';
-    if (f.employerName.trim() && !isHeEnText(f.employerName)) errs.employerName = 'Hebrew or English letters only';
   }
 
   return errs;
@@ -522,6 +522,9 @@ export default function App() {
                   {nats.map(n=><option key={n} value={n}>{n}</option>)}
                 </select>
               </F>
+              <F label="Employer / Company Name" he="שם המעסיק" hint="Optional / רשות" err={E('employerName')}>
+                <input {...inp('employerName')} value={f.employerName} onChange={e=>set('employerName',e.target.value)} placeholder="Employer or company name"/>
+              </F>
             </>}
 
             {/* ═══ PAGE 2 — EMPLOYMENT & WAGE ═══ */}
@@ -715,10 +718,6 @@ export default function App() {
 
               <F label="Additional comments or information:" he="הערות או מידע נוסף:" hint="Hebrew or English letters only / עברית או אנגלית בלבד" err={E('comments')}>
                 <textarea {...inp('comments')} style={{...inp('comments').style,minHeight:80,resize:'vertical'}} value={f.comments} onChange={e=>set('comments',e.target.value)}/>
-              </F>
-
-              <F label="Employer / Company Name" he="שם המעסיק" hint="Optional / רשות" err={E('employerName')} style={{marginTop:8}}>
-                <input {...inp('employerName')} value={f.employerName} onChange={e=>set('employerName',e.target.value)} placeholder="Employer or company name"/>
               </F>
             </>}
 
