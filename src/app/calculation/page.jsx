@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 
 const LOGO_B64 = "data:image/png;base64,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";
-const DRAFT_KEY = "hakeren_hourly_draft_v3";
+const DRAFT_KEY = "hakeren_hourly_draft_v4";
 
 const YN = [{v:'yes',l:'Yes',he:'כן'},{v:'no',l:'No',he:'לא'}];
 
@@ -12,10 +12,10 @@ const INITIAL = {
   employerName:'',           // employer / company name (optional, asked at the end)
 
   // ── Page 2 — Employment ──
-  start:'', end:'', termReason:'', resignReason:[], noticeDate:'',
+  start:'', end:'', termReason:'', noticeDate:'',
 
   // Last (current) hourly wage — most up-to-date values as of filling
-  hoursPerDay:'', daysPerWeek:'', hourlyRate:'', lastUpdateDate:'',
+  hoursPerDay:'', daysPerWeek:'', hourlyRate:'',
 
   // Historical wage updates (unlimited) — each a full snapshot + effective date
   wageUpdates:[],            // {hoursPerDay, daysPerWeek, hourlyRate, effectiveDate}
@@ -36,7 +36,10 @@ const INITIAL = {
   holidaysReceived:'',      holidaysDate:'',
   holidayType:'jewish',     holidayDaysWorked:'',
   lastSalaryNeeded:'',      lastSalaryDate:'',
-  comments:'',
+
+  // Delivery preference + consent (required to submit)
+  deliveryChannels:[],      // email / whatsapp
+  consent:false,
 };
 
 const WEBHOOK_URL = "https://hook.eu1.make.com/k0g7t1h3bw8n1h3hriukjltspdtfn4t9";
@@ -69,12 +72,10 @@ async function submitToMake(f) {
     start: f.start,
     end: f.end,
     termReason: f.termReason,
-    resignReason: Array.isArray(f.resignReason) ? f.resignReason[0] || '' : f.resignReason,
     noticeDate: f.noticeDate,
     hoursPerDay: Number(f.hoursPerDay) || 0,
     daysPerWeek: Number(f.daysPerWeek) || 0,
     hourlyRate: Number(f.hourlyRate) || 0,
-    lastUpdateDate: f.lastUpdateDate || null,
     wageUpdates,
     workType: f.workType === 'other' ? (f.workTypeOther || 'other') : f.workType,
     worksWeekends: f.worksWeekends === 'yes',
@@ -92,7 +93,8 @@ async function submitToMake(f) {
     holidayDaysWorked: Number(f.holidayDaysWorked) || 0,
     lastSalaryNeeded: f.lastSalaryNeeded === 'yes',
     lastSalaryDate: f.lastSalaryNeeded === 'yes' ? (f.lastSalaryDate || null) : null,
-    comments: f.comments || '',
+    deliveryChannels: f.deliveryChannels,
+    consent: f.consent,
 
     // Nested structure for record keeping
     meta: {
@@ -112,7 +114,6 @@ async function submitToMake(f) {
       start_date: f.start,
       end_date: f.end,
       termination_reason: f.termReason,
-      resignation_reason: f.resignReason,
       notice_date: f.noticeDate,
       work_type: f.workType === 'other' ? (f.workTypeOther || 'other') : f.workType,
       works_weekends: f.worksWeekends,
@@ -122,8 +123,7 @@ async function submitToMake(f) {
       current: {
         hours_per_day: Number(f.hoursPerDay) || 0,
         days_per_week: Number(f.daysPerWeek) || 0,
-        hourly_rate_ils: Number(f.hourlyRate) || 0,
-        last_update_date: f.lastUpdateDate || null
+        hourly_rate_ils: Number(f.hourlyRate) || 0
       },
       shabat_payment_ils: f.worksWeekends === 'yes' && f.shabat ? Number(f.shabat) : null,
       updates: wageUpdates
@@ -144,8 +144,9 @@ async function submitToMake(f) {
       last_salary_needed: f.lastSalaryNeeded === 'yes',
       last_salary_date: f.lastSalaryNeeded === 'yes' ? (f.lastSalaryDate || null) : null
     },
-    additional: {
-      comments: f.comments || null
+    delivery: {
+      channels: f.deliveryChannels,
+      consent_marketing: f.consent
     }
   };
 
@@ -195,8 +196,6 @@ function validatePage(page, f) {
     else { var ey = new Date(f.end).getFullYear(); if (ey < 1950 || ey > 2100) errs.end = 'Year must be between 1950-2100'; }
     if (f.start && f.end && f.end < f.start) errs.end = 'End date must be after start date';
     if (!f.termReason)               errs.termReason = 'Select a reason';
-    if (f.termReason === 'resign' && f.resignReason.length === 0)
-                                     errs.resignReason = 'Please select reason for resignation';
     if (!f.noticeDate)               errs.noticeDate = 'Notice date is required';
 
     // Current hourly wage
@@ -206,7 +205,6 @@ function validatePage(page, f) {
     else if (!isPosNum(f.daysPerWeek)) errs.daysPerWeek = 'Enter a valid number';
     if (!f.hourlyRate)              errs.hourlyRate = 'Required';
     else if (!isPosNum(f.hourlyRate)) errs.hourlyRate = 'Enter a valid amount';
-    if (!f.lastUpdateDate)          errs.lastUpdateDate = 'Last update date is required';
 
     // Wage updates
     f.wageUpdates.forEach((w, i) => {
@@ -257,7 +255,8 @@ function validatePage(page, f) {
     if (f.holidayDaysWorked === '' || f.holidayDaysWorked === undefined) errs.holidayDaysWorked = 'Please enter number of holiday days (0-9)';
     if (!f.lastSalaryNeeded)         errs.lastSalaryNeeded = 'Please answer this question';
     if (f.lastSalaryNeeded === 'yes' && !f.lastSalaryDate) errs.lastSalaryDate = 'Please enter the last salary date';
-    if (f.comments.trim() && !isHeEnText(f.comments)) errs.comments = 'Hebrew or English letters only';
+    if (f.deliveryChannels.length === 0) errs.deliveryChannels = 'Please choose where to receive the calculation';
+    if (!f.consent)                  errs.consent = 'You must agree in order to submit the form';
   }
 
   return errs;
@@ -421,7 +420,6 @@ export default function App() {
 
   const nats = ['Filipino','Romanian','Moldovan','Ukrainian','Russian','Sri Lankan','Chinese','Indian','Thai','Other'];
   const termOpts = [{v:'fired',l:'Got Fired',he:'פוטר'},{v:'resign',l:'Resigned',he:'התפטר'}];
-  const resignOpts = [{v:'nopay',l:"They didn't pay me",he:'לא שילמו לי'},{v:'sick',l:"I'm sick (medical)",he:'אני חולה (רפואי)'},{v:'harassment',l:'Sexual harassment',he:'הטרדה מינית'},{v:'other',l:'Other reason',he:'סיבה אחרת'}];
   const workTypeOpts = [{v:'cleaning',l:'Cleaning',he:'ניקיון'},{v:'housekeeping',l:'House Keeping',he:'משק בית'},{v:'other',l:'Other',he:'אחר'}];
   const holidayTypeOpts = [{v:'jewish',l:'Jewish',he:'יהודי'},{v:'christian_catholic',l:'Christian Catholic',he:'נוצרי קתולי'},{v:'christian_orthodox',l:'Christian Orthodox',he:'נוצרי אורתודוקסי'},{v:'thailand',l:'Thailand',he:'תאילנד'},{v:'india',l:'India',he:'הודו'},{v:'srilanka',l:'Sri Lanka',he:'סרי לנקה'},{v:'romania',l:'Romania',he:'רומניה'},{v:'ukraine',l:'Ukraine',he:'אוקראינה'}];
   const inp = (k, extra) => {
@@ -469,16 +467,12 @@ export default function App() {
         <div className="hk-hero">
           <h1>טופס חישוב שעתי | Hourly Calculation Form</h1>
           <div className="he notranslate" style={{direction:'rtl',textAlign:'right'}}>
-            <p style={{marginBottom:8}}>מחשבון זכויות אוטומטי. הכניסו את הנתונים לפי השלבים כדי לדעת כמה יש לשלם לעובד זר שעתי בסיום העסקה.</p>
-            <p style={{marginBottom:8}}>המחשבון פותח על ידי הקרן הישראלית לזכויות העובד הזר בע"מ ונותן מענה מושלם למעסיקים לסיים ביחד, בכבוד, את ההעסקה.</p>
-            <p style={{marginBottom:8}}>תוצאות גמר החשבון יישלחו אליכם מיד לאחר סיום הכנסת הנתונים וביצוע התשלום. לתשלום בהעברה בנקאית ניתן להעלות אישור תשלום בקישור: <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>payment.hakeren.org.il</a></p>
-            <p>לתשלום בטלפון: <a href="tel:0722243333" style={{color:'#1565c0',fontWeight:700}}>072-2243333</a></p>
+            <p>מחשבון זכויות אוטומטי לעובדים זרים בשכר שעתי. הזינו את פרטי ההעסקה שלב אחר שלב וגלו כמה מגיע לעובד/ת בסיום ההעסקה. השירות פותח על ידי הקרן הישראלית לזכויות העובד הזר בע"מ כדי לעזור לעובדים ולמעסיקים לבצע את גמר החשבון בצורה ברורה ומכובדת. התוצאות יישלחו אליכם מיד לאחר התשלום.</p>
+            <div style={{background:'#f5f7fa',border:'1px solid #e0e8f5',borderRadius:6,padding:'8px 12px',marginTop:8,fontSize:12}}>תשלום באשראי: <a href="https://pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment</a> · העברה בנקאית: <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>payment.hakeren.org.il</a> · תשלום בטלפון: <a href="tel:0722243333" style={{color:'#1565c0',fontWeight:700}}>072-2243333</a></div>
           </div>
           <div style={{marginTop:12,paddingTop:12,borderTop:'1px solid #e0e8f5'}}>
-            <p style={{marginBottom:8}}>An automatic rights calculator. Enter the details step by step to find out how much is owed to an hourly foreign worker at the end of employment.</p>
-            <p style={{marginBottom:8}}>The calculator was developed by The Israeli Foundation for Foreign Worker Rights Ltd. and gives employers a complete solution to end the employment together, with dignity.</p>
-            <p style={{marginBottom:8}}>Your final-settlement results will be sent to you as soon as you finish entering the details and complete the payment. To pay by bank transfer, you can upload a payment confirmation at: <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>payment.hakeren.org.il</a></p>
-            <p>To pay by phone: <a href="tel:0722243333" style={{color:'#1565c0',fontWeight:700}}>072-2243333</a></p>
+            <p style={{marginBottom:0}}>Automatic Rights Calculator for Hourly Foreign Workers. Enter your employment details step by step and find out how much you may be entitled to receive when your employment ends. The service was developed by HAKEREN Ltd. to help workers and employers complete the final settlement clearly and respectfully. Your results will be sent immediately after payment.</p>
+            <div style={{background:'#f5f7fa',border:'1px solid #e0e8f5',borderRadius:6,padding:'8px 12px',marginTop:8,fontSize:12}}>Credit card payment: <a href="https://pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment</a> · Bank transfer: <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>payment.hakeren.org.il</a> · Phone payment: <a href="tel:0722243333" style={{color:'#1565c0',fontWeight:700}}>072-2243333</a></div>
           </div>
         </div>
         </>}
@@ -543,11 +537,6 @@ export default function App() {
                 <Chips opts={termOpts} val={f.termReason} on={v=>set('termReason',v)} hasErr={showErrs&&!f.termReason}/>
                 <Err msg={E('termReason')}/>
               </div>
-              {f.termReason==='resign'&&<div className="field">
-                <label style={{fontWeight:700,color:'#1565c0'}}>Why did you resign? <span className="he notranslate">/ מדוע התפטרת?</span> <span className="req-star">*</span></label>
-                <ChkGrp opts={resignOpts} vals={f.resignReason} on={v=>set('resignReason',v)}/>
-                <Err msg={E('resignReason')}/>
-              </div>}
               <F label="When did you provide or receive advance notice?" he="מתי ניתנה או התקבלה הודעה מוקדמת?" req err={E('noticeDate')}>
                 <input {...inp('noticeDate')} type="date" value={f.noticeDate} onChange={e=>set('noticeDate',e.target.value)}/>
               </F>
@@ -569,9 +558,6 @@ export default function App() {
                   <input {...inp('hourlyRate')} type="number" min="0" step="0.01" value={f.hourlyRate} onChange={e=>set('hourlyRate',e.target.value)} placeholder="NIS/hour"/>
                 </F>
               </div>
-              <F label="Last update date" he="תאריך עדכון אחרון" req hint="The date these figures became valid" err={E('lastUpdateDate')}>
-                <input {...inp('lastUpdateDate')} type="date" value={f.lastUpdateDate} onChange={e=>set('lastUpdateDate',e.target.value)}/>
-              </F>
 
               {/* Wage updates */}
               <p style={{fontSize:14,fontWeight:700,color:'#1565c0',margin:'16px 0 8px'}}>Wage Updates <span className="he notranslate">/ עדכוני שכר</span></p>
@@ -716,9 +702,19 @@ export default function App() {
                 <input {...inp('lastSalaryDate')} type="date" value={f.lastSalaryDate} onChange={e=>set('lastSalaryDate',e.target.value)}/>
               </F>}
 
-              <F label="Additional comments or information:" he="הערות או מידע נוסף:" hint="Hebrew or English letters only / עברית או אנגלית בלבד" err={E('comments')}>
-                <textarea {...inp('comments')} style={{...inp('comments').style,minHeight:80,resize:'vertical'}} value={f.comments} onChange={e=>set('comments',e.target.value)}/>
-              </F>
+              <div className="field" style={{marginTop:8}}>
+                <label style={{fontWeight:700,color:'#1565c0'}}>Where would you like to receive the calculation? <span className="he notranslate">/ לאן תרצו לקבל את החישוב?</span> <span className="req-star">*</span></label>
+                <ChkGrp opts={[{v:'email',l:'Email',he:'מייל'},{v:'whatsapp',l:'WhatsApp',he:'וואטסאפ'}]} vals={f.deliveryChannels} on={v=>set('deliveryChannels',v)}/>
+                <Err msg={E('deliveryChannels')}/>
+              </div>
+
+              <div className="field" style={{background:'#f0f6ff',border:`1px solid ${(showErrs||touched.consent)&&errs.consent?'#e53935':'#c5d9f0'}`,borderRadius:6,padding:'12px 14px',marginTop:8}}>
+                <label className="chk-item" style={{alignItems:'flex-start',fontSize:13}}>
+                  <input type="checkbox" checked={f.consent} onChange={e=>set('consent',e.target.checked)} style={{marginTop:2,width:16,height:16,cursor:'pointer',accentColor:'#1565c0'}}/>
+                  <span>I agree to receive the calculation results, related information and promotional messages. <span className="he notranslate">/ אני מאשר/ת קבלת תוצאות החישוב, מידע והודעות פרסומיות.</span> <span className="req-star">*</span></span>
+                </label>
+                <Err msg={E('consent')}/>
+              </div>
             </>}
 
             {/* Navigation */}
