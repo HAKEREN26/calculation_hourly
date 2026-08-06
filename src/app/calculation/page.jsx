@@ -291,6 +291,21 @@ const css = `
   .hk-hero h1{font-size:20px;font-weight:700;color:#1565c0;margin-bottom:12px;text-align:center}
   .hk-hero p{font-size:13px;color:#444;line-height:1.7;margin-bottom:8px}
   .hk-hero p.b{font-weight:700;color:#1565c0}
+  .intro-card{background:#fff;border:1px solid #e3e9f2;border-radius:14px;box-shadow:0 2px 16px rgba(21,101,192,0.07);overflow:hidden;margin:18px 0 20px}
+  .intro-card-top{height:5px;background:linear-gradient(90deg,#1565c0 0%,#29b6f6 55%,#ffa726 100%)}
+  .intro-body{padding:22px 26px}
+  .intro-he{direction:rtl;text-align:right}
+  .intro-en{direction:ltr;text-align:left}
+  .intro-card h2{font-size:19px;font-weight:700;color:#1565c0;margin-bottom:10px;line-height:1.4}
+  .intro-card p{font-size:13.5px;color:#3a4a5e;line-height:1.85;margin-bottom:14px}
+  .pay-box{background:#eef3fc;border:1px solid #dce6f7;border-radius:10px;padding:12px 16px}
+  .pay-box .row{font-size:12.5px;line-height:1.85;margin:2px 0;word-break:break-word}
+  .pay-box a{color:#1565c0;font-weight:700;text-decoration:none}
+  .pay-box a:hover{text-decoration:underline}
+  .pay-lbl-he{color:#1565c0;font-weight:700}
+  .pay-lbl-en{color:#e8730c;font-weight:700}
+  .intro-divider{height:1px;background:#e6ecf5;margin:18px 0}
+  @media(max-width:600px){.intro-body{padding:18px 16px}.intro-card h2{font-size:16px}}
   .pay-notice{background:#fff8e1;border:1px solid #ffd54f;border-left:4px solid #f9a825;border-radius:6px;padding:12px 16px;margin-bottom:18px;font-size:13px;line-height:1.6;color:#5d4037}
   .pay-notice strong:first-child{display:block;margin-bottom:4px}
   .pay-notice strong{color:#e65100}
@@ -487,15 +502,28 @@ export default function App() {
 
       <div className="pw">
         {page===1&&<>
-        <div className="hk-hero">
-          <h1>טופס חישוב שעתי | Hourly Calculation Form</h1>
-          <div className="he notranslate" style={{direction:'rtl',textAlign:'right'}}>
-            <p>מחשבון זכויות אוטומטי לעובדים זרים בשכר שעתי. הזינו את פרטי ההעסקה שלב אחר שלב וגלו כמה מגיע לעובד/ת בסיום ההעסקה. השירות פותח על ידי הקרן הישראלית לזכויות העובד הזר בע"מ כדי לעזור לעובדים ולמעסיקים לבצע את גמר החשבון בצורה ברורה ומכובדת. התוצאות יישלחו אליכם מיד לאחר התשלום.</p>
-            <div style={{background:'#f5f7fa',border:'1px solid #e0e8f5',borderRadius:6,padding:'8px 12px',marginTop:8,fontSize:12}}>תשלום באשראי: <a href="https://pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment</a> · העברה בנקאית: <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>payment.hakeren.org.il</a> · תשלום בטלפון: <a href="tel:0722243333" style={{color:'#1565c0',fontWeight:700}}>072-2243333</a></div>
-          </div>
-          <div style={{marginTop:12,paddingTop:12,borderTop:'1px solid #e0e8f5'}}>
-            <p style={{marginBottom:0}}>Automatic Rights Calculator for Hourly Foreign Workers. Enter your employment details step by step and find out how much you may be entitled to receive when your employment ends. The service was developed by HAKEREN Ltd. to help workers and employers complete the final settlement clearly and respectfully. Your results will be sent immediately after payment.</p>
-            <div style={{background:'#f5f7fa',border:'1px solid #e0e8f5',borderRadius:6,padding:'8px 12px',marginTop:8,fontSize:12}}>Credit card payment: <a href="https://pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment</a> · Bank transfer: <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer" style={{color:'#1565c0',fontWeight:700}}>payment.hakeren.org.il</a> · Phone payment: <a href="tel:0722243333" style={{color:'#1565c0',fontWeight:700}}>072-2243333</a></div>
+        <div className="intro-card">
+          <div className="intro-card-top"/>
+          <div className="intro-body">
+            <div className="intro-he he notranslate">
+              <h2>מחשבון זכויות אוטומטי לעובדים זרים בשכר שעתי</h2>
+              <p>הזינו את פרטי ההעסקה שלב אחר שלב וגלו כמה מגיע לעובד/ת בסיום ההעסקה. השירות פותח על ידי הקרן הישראלית לזכויות העובד הזר בע"מ כדי לעזור לעובדים ולמעסיקים לבצע את גמר החשבון בצורה ברורה ומכובדת. התוצאות יישלחו אליכם מיד לאחר התשלום.</p>
+              <div className="pay-box">
+                <div className="row"><span className="pay-lbl-he">תשלום באשראי:</span> <a href="https://pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment" target="_blank" rel="noopener noreferrer">pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment</a></div>
+                <div className="row"><span className="pay-lbl-he">העברה בנקאית:</span> <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer">payment.hakeren.org.il</a></div>
+                <div className="row"><span className="pay-lbl-he">תשלום בטלפון:</span> <a href="tel:0722243333">072-2243333</a></div>
+              </div>
+            </div>
+            <div className="intro-divider"/>
+            <div className="intro-en">
+              <h2>Automatic Rights Calculator for Hourly Foreign Workers</h2>
+              <p>Enter your employment details step by step and find out how much you may be entitled to receive when your employment ends. The service was developed by HAKEREN Ltd. to help workers and employers complete the final settlement clearly and respectfully. Your results will be sent immediately after payment.</p>
+              <div className="pay-box">
+                <div className="row"><span className="pay-lbl-en">Credit card:</span> <a href="https://pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment" target="_blank" rel="noopener noreferrer">pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment</a></div>
+                <div className="row"><span className="pay-lbl-en">Bank transfer:</span> <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer">payment.hakeren.org.il</a></div>
+                <div className="row"><span className="pay-lbl-en">Phone payment:</span> <a href="tel:0722243333">072-2243333</a></div>
+              </div>
+            </div>
           </div>
         </div>
         </>}
