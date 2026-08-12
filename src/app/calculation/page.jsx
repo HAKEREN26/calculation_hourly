@@ -507,7 +507,7 @@ export default function App() {
           <div className="intro-body">
             <div className="intro-he he notranslate">
               <h2>מחשבון זכויות אוטומטי לעובדים זרים בשכר שעתי</h2>
-              <p>הזינו את פרטי ההעסקה שלב אחר שלב וגלו כמה מגיע לעובד/ת בסיום ההעסקה. השירות פותח על ידי הקרן הישראלית לזכויות העובד הזר בע"מ כדי לעזור לעובדים ולמעסיקים לבצע את גמר החשבון בצורה ברורה ומכובדת. התוצאות יישלחו אליכם מיד לאחר התשלום.</p>
+              <p>השירות פותח על ידי הקרן הישראלית לזכויות העובד הזר בע"מ כדי לעזור לעובדים ולמעסיקים לבצע את גמר החשבון בצורה ברורה ומכובדת. הזינו את פרטי ההעסקה שלב אחר שלב וגלו כמה מגיע לעובד/ת בסיום ההעסקה, התוצאות יישלחו אליכם מיד לאחר התשלום.</p>
               <div className="pay-box">
                 <div className="row"><span className="pay-lbl-he">תשלום באשראי:</span> <a href="https://pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment" target="_blank" rel="noopener noreferrer">pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment</a></div>
                 <div className="row"><span className="pay-lbl-he">העברה בנקאית:</span> <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer">payment.hakeren.org.il</a></div>
@@ -517,7 +517,7 @@ export default function App() {
             <div className="intro-divider"/>
             <div className="intro-en">
               <h2>Automatic Rights Calculator for Hourly Foreign Workers</h2>
-              <p>Enter your employment details step by step and find out how much you may be entitled to receive when your employment ends. The service was developed by HAKEREN Ltd. to help workers and employers complete the final settlement clearly and respectfully. Your results will be sent immediately after payment.</p>
+              <p>This service was developed by the HAKEREN Israeli Fund for Foreign Workers Ltd. to help employees and employers complete the final employment settlement process in a clear and respectful manner. Enter your employment details step by step to find out how much the employee is entitled to receive at the end of their employment. Your results will be sent to you immediately after payment.</p>
               <div className="pay-box">
                 <div className="row"><span className="pay-lbl-en">Credit card:</span> <a href="https://pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment" target="_blank" rel="noopener noreferrer">pay.sumit.co.il/xooxvp/yj6hfa/yj6hfb/payment</a></div>
                 <div className="row"><span className="pay-lbl-en">Bank transfer:</span> <a href="https://payment.hakeren.org.il" target="_blank" rel="noopener noreferrer">payment.hakeren.org.il</a></div>
@@ -613,8 +613,8 @@ export default function App() {
               {/* Wage updates */}
               <p style={{fontSize:14,fontWeight:700,color:'#1565c0',margin:'16px 0 8px'}}>Wage Updates <span className="he notranslate">/ עדכוני שכר</span></p>
               <p style={{fontSize:12,color:'#555',marginBottom:10,lineHeight:1.5,background:'#f5f5f5',padding:'8px 12px',borderRadius:8,border:'1px solid #e0e0e0'}}>
-                List <strong>every earlier change</strong> that affected your wage during the employment. For each update, enter the hours per day, days per week, hourly wage, and the date it became valid.
-                <br/><span className="he notranslate" style={{display:'block',direction:'rtl',textAlign:'right'}}>נא לפרט כל שינוי קודם שהשפיע על השכר במהלך ההעסקה. לכל עדכון יש להזין מס' שעות ליום, מס' ימים בשבוע, שכר לשעה, ותאריך תחילת התוקף.</span>
+                Please provide details of any changes made to your salary, including when each change took place, your hourly wage, how many hours you worked per day, and how many days you worked per week.
+                <br/><span className="he notranslate" style={{display:'block',direction:'rtl',textAlign:'right'}}>פרט/י כל שינוי שנעשה בשכרך, כולל מועד השינוי, מה היה שכרך לשעה, כמה שעות עבדת בכל יום וכמה ימים בשבוע עבדת.</span>
               </p>
               {f.wageUpdates.map((w,i)=><div key={i} className="sal-blk">
                 <button className="rm" onClick={()=>rmWU(i)}>✕</button>
@@ -683,7 +683,7 @@ export default function App() {
 
               {/* Employer vacations */}
               <p style={{fontSize:14,fontWeight:700,color:'#1565c0',margin:'16px 0 4px'}}>Employer Vacations <span className="he notranslate">/ חופשות של המעסיק</span></p>
-              <p style={{fontSize:12,color:'#666',marginBottom:10}}>Periods the employer was away (so you did not work). Enter departure and return dates. <span className="he notranslate">תקופות שבהן המעסיק היה בחופשה (ולא עבדת). יש להזין תאריך יציאה ותאריך חזרה.</span></p>
+              <p style={{fontSize:12,color:'#666',marginBottom:10}}>Enter the dates your employer was away on vacation. <span className="he notranslate">תקופות שבהן המעסיק היה בחופשה (ולא עבדת). יש להזין תאריך יציאה ותאריך חזרה.</span></p>
               {f.employerVacations.map((v,i)=><div key={i} className="vac-blk">
                 {f.employerVacations.length>1&&<button className="rm" onClick={()=>rmRV(i)}>✕</button>}
                 <p style={{fontSize:13,fontWeight:700,color:'#1565c0',marginBottom:10}}>Employer vacation {i+1} <span className="he notranslate">/ חופשת מעסיק {i+1}</span></p>
