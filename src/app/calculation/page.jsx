@@ -683,7 +683,7 @@ export default function App() {
 
               {/* Employer vacations */}
               <p style={{fontSize:14,fontWeight:700,color:'#1565c0',margin:'16px 0 4px'}}>Employer Vacations <span className="he notranslate">/ חופשות של המעסיק</span></p>
-              <p style={{fontSize:12,color:'#666',marginBottom:10}}>Enter the dates your employer was away on vacation. <span className="he notranslate">תקופות שבהן המעסיק היה בחופשה (ולא עבדת). יש להזין תאריך יציאה ותאריך חזרה.</span></p>
+              <p style={{fontSize:12,color:'#666',marginBottom:10}}>Enter the dates your employer was away on vacation, including the departure and return dates. <span className="he notranslate">תקופות שבהן המעסיק היה בחופשה (ולא עבדת). יש להזין תאריך יציאה ותאריך חזרה.</span></p>
               {f.employerVacations.map((v,i)=><div key={i} className="vac-blk">
                 {f.employerVacations.length>1&&<button className="rm" onClick={()=>rmRV(i)}>✕</button>}
                 <p style={{fontSize:13,fontWeight:700,color:'#1565c0',marginBottom:10}}>Employer vacation {i+1} <span className="he notranslate">/ חופשת מעסיק {i+1}</span></p>
