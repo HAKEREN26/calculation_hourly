@@ -16,6 +16,7 @@ const INITIAL = {
 
   // Last (current) hourly wage — most up-to-date values as of filling
   hoursPerDay:'', daysPerWeek:'', hourlyRate:'',
+  lastUpdateDate:'',         // when the CURRENT wage took effect (needed when the wage changed over time)
 
   // Historical wage updates (unlimited) — each a full snapshot + effective date
   wageUpdates:[],            // {hoursPerDay, daysPerWeek, hourlyRate, effectiveDate}
@@ -78,6 +79,7 @@ async function submitToMake(f) {
     hoursPerDay: Number(f.hoursPerDay) || 0,
     daysPerWeek: Number(f.daysPerWeek) || 0,
     hourlyRate: Number(f.hourlyRate) || 0,
+    lastUpdateDate: f.lastUpdateDate || null,
     wageUpdates,
     workType: f.workType === 'other' ? (f.workTypeOther || 'other') : f.workType,
     worksWeekends: f.worksWeekends === 'yes',
@@ -127,7 +129,8 @@ async function submitToMake(f) {
       current: {
         hours_per_day: Number(f.hoursPerDay) || 0,
         days_per_week: Number(f.daysPerWeek) || 0,
-        hourly_rate_ils: Number(f.hourlyRate) || 0
+        hourly_rate_ils: Number(f.hourlyRate) || 0,
+        last_update_date: f.lastUpdateDate || null
       },
       shabat_payment_ils: f.worksWeekends === 'yes' && f.shabat ? Number(f.shabat) : null,
       updates: wageUpdates
@@ -215,15 +218,20 @@ function validatePage(page, f) {
     else if (!isPosNum(f.hourlyRate)) errs.hourlyRate = 'Enter a valid amount';
 
     // Wage updates
+    let hasWageUpdate = false;
     f.wageUpdates.forEach((w, i) => {
       const any = w.hoursPerDay || w.daysPerWeek || w.hourlyRate || w.effectiveDate;
       if (any) {
+        hasWageUpdate = true;
         if (!isPosNum(w.hoursPerDay)) errs[`wu_${i}_hpd`] = 'Enter hours';
         if (!isPosNum(w.daysPerWeek)) errs[`wu_${i}_dpw`] = 'Enter days';
         if (!isPosNum(w.hourlyRate))  errs[`wu_${i}_rate`] = 'Enter rate';
         if (!w.effectiveDate)         errs[`wu_${i}_date`] = 'Date required';
       }
     });
+    // If the wage changed over time, the current wage MUST carry its own start date,
+    // otherwise its period cannot be placed on the timeline.
+    if (hasWageUpdate && !f.lastUpdateDate) errs.lastUpdateDate = 'Required when the wage changed — enter when the current wage started';
 
     // Work type
     if (!f.workType)                 errs.workType = 'Please select the type of work';
@@ -608,6 +616,15 @@ export default function App() {
                 <F label="Wage per hour (NIS)" he="שכר לשעה (בשקלים)" req err={E('hourlyRate')}>
                   <input {...inp('hourlyRate')} type="number" min="0" step="0.01" value={f.hourlyRate} onChange={e=>set('hourlyRate',e.target.value)} placeholder="NIS/hour"/>
                 </F>
+              </div>
+              <div style={{marginTop:10}}>
+                <F label="Since when has this wage been in effect?" he="ממתי השכר הזה בתוקף?" err={E('lastUpdateDate')}>
+                  <input {...inp('lastUpdateDate')} type="date" value={f.lastUpdateDate} onChange={e=>set('lastUpdateDate',e.target.value)}/>
+                </F>
+                <p style={{fontSize:12,color:'#555',marginTop:6,lineHeight:1.5,background:'#f5f5f5',padding:'8px 12px',borderRadius:8,border:'1px solid #e0e0e0'}}>
+                  If your wage changed over time, enter the date your <strong>current</strong> wage started. If it never changed, leave blank (your start date is used).
+                  <br/><span className="he notranslate" style={{display:'block',direction:'rtl',textAlign:'right'}}>אם השכר שלך השתנה לאורך הזמן — יש להזין את התאריך שבו נכנס לתוקף השכר <strong>הנוכחי</strong>. אם השכר לא השתנה מעולם — ניתן להשאיר ריק (ייחשב מתאריך תחילת העבודה).</span>
+                </p>
               </div>
 
               {/* Wage updates */}
