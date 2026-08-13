@@ -218,20 +218,18 @@ function validatePage(page, f) {
     else if (!isPosNum(f.hourlyRate)) errs.hourlyRate = 'Enter a valid amount';
 
     // Wage updates
-    let hasWageUpdate = false;
     f.wageUpdates.forEach((w, i) => {
       const any = w.hoursPerDay || w.daysPerWeek || w.hourlyRate || w.effectiveDate;
       if (any) {
-        hasWageUpdate = true;
         if (!isPosNum(w.hoursPerDay)) errs[`wu_${i}_hpd`] = 'Enter hours';
         if (!isPosNum(w.daysPerWeek)) errs[`wu_${i}_dpw`] = 'Enter days';
         if (!isPosNum(w.hourlyRate))  errs[`wu_${i}_rate`] = 'Enter rate';
         if (!w.effectiveDate)         errs[`wu_${i}_date`] = 'Date required';
       }
     });
-    // If the wage changed over time, the current wage MUST carry its own start date,
-    // otherwise its period cannot be placed on the timeline.
-    if (hasWageUpdate && !f.lastUpdateDate) errs.lastUpdateDate = 'Required when the wage changed — enter when the current wage started';
+    // The current wage must always carry its start date so its period can be placed on the
+    // timeline (if the wage never changed, this is simply the employment start date).
+    if (!f.lastUpdateDate) errs.lastUpdateDate = 'Required — when did the current wage start? (use the employment start date if it never changed)';
 
     // Work type
     if (!f.workType)                 errs.workType = 'Please select the type of work';
@@ -618,12 +616,12 @@ export default function App() {
                 </F>
               </div>
               <div style={{marginTop:10}}>
-                <F label="Since when has this wage been in effect?" he="ממתי השכר הזה בתוקף?" err={E('lastUpdateDate')}>
+                <F label="Since when has this wage been in effect?" he="ממתי השכר הזה בתוקף?" req err={E('lastUpdateDate')}>
                   <input {...inp('lastUpdateDate')} type="date" value={f.lastUpdateDate} onChange={e=>set('lastUpdateDate',e.target.value)}/>
                 </F>
                 <p style={{fontSize:12,color:'#555',marginTop:6,lineHeight:1.5,background:'#f5f5f5',padding:'8px 12px',borderRadius:8,border:'1px solid #e0e0e0'}}>
-                  If your wage changed over time, enter the date your <strong>current</strong> wage started. If it never changed, leave blank (your start date is used).
-                  <br/><span className="he notranslate" style={{display:'block',direction:'rtl',textAlign:'right'}}>אם השכר שלך השתנה לאורך הזמן — יש להזין את התאריך שבו נכנס לתוקף השכר <strong>הנוכחי</strong>. אם השכר לא השתנה מעולם — ניתן להשאיר ריק (ייחשב מתאריך תחילת העבודה).</span>
+                  Enter the date your <strong>current</strong> wage started. If your wage never changed, enter your employment start date.
+                  <br/><span className="he notranslate" style={{display:'block',direction:'rtl',textAlign:'right'}}>יש להזין את התאריך שבו נכנס לתוקף השכר <strong>הנוכחי</strong>. אם השכר לא השתנה מעולם — יש להזין את תאריך תחילת העבודה.</span>
                 </p>
               </div>
 
