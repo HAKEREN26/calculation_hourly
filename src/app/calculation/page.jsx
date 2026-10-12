@@ -43,9 +43,53 @@ const INITIAL = {
   deliveryEmails:[''],      // where to send (one or more) when Email is chosen
   deliveryWhatsapps:[''],   // where to send (one or more) when WhatsApp is chosen
   consent:false,
+  sessionId:'',             // set on first "Next" — ties progress saves to the final submission
 };
 
 const WEBHOOK_URL = "https://hook.eu1.make.com/k0g7t1h3bw8n1h3hriukjltspdtfn4t9";
+// Receives the details filled in so far each time a page is completed (status
+// 'partial'), and a 'completed' ping on final submission — so people who start
+// the form and never submit it can be followed up. This is the same Google Apps
+// Script web app the monthly calculation form writes to (the "log" tab of the
+// fund's sheet), so the field names below follow that tab's columns.
+const PROGRESS_URL = "https://script.google.com/macros/s/AKfycbwcorJ4_T5psQNBTk9HDc9yQx1EogJcacdVbqPUQ8yr4uJS-QVcT16blmINnU7ppNukTA/exec";
+
+function newSessionId() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,12)}`;
+}
+
+// Fire-and-forget: a failed progress save must never block the person filling the form.
+function sendProgress(f, status, reachedPage) {
+  try {
+    // Apps Script web apps can't answer a CORS preflight, so this goes out as a
+    // "simple" request (text/plain, no-cors); the script parses the body as JSON.
+    fetch(PROGRESS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      keepalive: true,
+      body: JSON.stringify({
+        session_id: f.sessionId,
+        status,
+        reached_page: reachedPage,
+        timestamp: new Date().toISOString(),
+        form: 'hourly',
+        name: f.name,
+        phone: f.phone,
+        email: f.email,
+        nationality: f.nationality,
+        passport: f.passport,
+        empFirstName: f.employerName,
+        start: f.start,
+        end: f.end,
+        termReason: f.termReason,
+        // The shared "salary" column holds monthly pay for the other form — mark this one as hourly.
+        salary: f.hourlyRate ? `${f.hourlyRate}/hour` : ''
+      })
+    }).catch(() => {});
+  } catch(e) {}
+}
 
 async function submitToMake(f) {
   const wageUpdates = f.wageUpdates
@@ -443,7 +487,11 @@ export default function App() {
     }
     setShowErrs(false);
     setTouched({});
-    saveDraft();
+    const next = {...f, sessionId: f.sessionId || newSessionId()};
+    setF(next);
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({data:next, savedAt:new Date().toISOString()}));
+    setSavedAt(new Date().toLocaleTimeString());
+    sendProgress(next, 'partial', page+1);
     setPage(p => p+1);
     topRef.current?.scrollIntoView({behavior:'smooth'});
   };
@@ -845,6 +893,7 @@ export default function App() {
                       setSendError(null);
                       try {
                         await submitToMake(f);
+                        sendProgress(f, 'completed', 3);
                         localStorage.removeItem(DRAFT_KEY);
                         setSubmitted(true);
                       } catch(e) {
